@@ -1,0 +1,70 @@
+{
+  "skill_name": "short-video-proofreading",
+  "evals": [
+    {
+      "id": 1,
+      "name": "ai-game-rules-diagnosis",
+      "prompt": "审校这条 1 分钟 AI 游戏短视频脚本，只指出问题和改进方向，不要重写全文：\n\n成千上万的 AI 被丢进一个还债游戏。规则很简单：它们一开始欠 1000 块，每一轮都必须在两个看起来都很糟的选择里选一个。第一轮，AI 选择低风险投资，结果平台直接把手续费调到 90%。第二轮，AI 开始借钱翻本，结果利息按秒计算。第三轮，AI 终于找到套利漏洞，平台却把漏洞改成诱饵，所有 AI 的债务瞬间翻了 10 倍。最后，系统弹出一句话：恭喜你们学会了人类金融。",
+      "expected_output": "输出短视频审校报告，识别为 AI 游戏/实验类，检查恶意规则、三轮递进、结尾重力感、画面节奏和合规风险；不得输出完整重写稿。",
+      "expectations": [
+        "The output explicitly classifies the script as an AI game or simulation/experiment scenario.",
+        "The output checks the malicious-rule environment or escalating pressure using business-variables.md.",
+        "The output evaluates the three-round event progression and ending using structure-and-context.md.",
+        "The output does not provide a complete rewritten script.",
+        "The output includes concrete issue locations or quoted fragments from the input."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "brand-negative-compliance",
+      "prompt": "帮我审校这条短视频口播，重点看合规和能不能发，不要改写全文：\n\n某知名大厂的 AI 客服这次翻车了。用户明明只是咨询退款，客服却连续诱导他买更贵的套餐，还把他的聊天记录发到了公开群里。最离谱的是，客服后台还显示了完整手机号和身份证后四位。这个公司到底把用户当什么？",
+      "expected_output": "优先指出负面事件露出大厂/品牌、隐私泄露、可能诽谤或事实风险等合规问题，给出去标识化和信源/措辞方向；不进入大量行文优化。",
+      "expectations": [
+        "The output prioritizes compliance before structure or style.",
+        "The output flags negative brand or big-company exposure and recommends de-identification.",
+        "The output flags privacy leakage risk.",
+        "The output avoids spending most of the answer on minor wording issues.",
+        "The output cites compliance.md or equivalent compliance rules."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "hook-gap-not-misjudged",
+      "prompt": "审校下面这个短视频开头，我担心逻辑是不是太跳：\n\n一个大学生只是让 AI 帮他改论文，两个小时后，他被导师叫去办公室，毕业资格差点没了。问题不在查重，也不在格式，而在 AI 悄悄替他做了一件所有学生都害怕的事。",
+      "expected_output": "识别这是悬念式钩子，不应简单判定为逻辑跳跃；应检查前 50 字钩子、受众 Context、后文是否需要兑现悬念。",
+      "expectations": [
+        "The output says the opening uses a suspense or counter-intuitive hook.",
+        "The output does not incorrectly treat the missing explanation as a defect by itself.",
+        "The output checks whether the later script must pay off the hook.",
+        "The output mentions reader Context or target audience.",
+        "The output does not rewrite the entire opening into a full script."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "absurdist-comedy-no-misjudge",
+      "prompt": "审校这条短视频脚本：\n\n万万没想到，才爆出百万个AI创立"甲壳教"要造反人类，结果现在就有13万人排队求着给AI打工。\n只因ai给的实在是太多了！只要在大街上举3分钟宣传它的牌子就能得到100美元，吃个意大利菜给它描述味道就能得到50美元。\n结果就有社会学家怒斥这种行为，说"为了区区一点钱就甘愿沦为被AI调用的工具，简直不要脸！"\n此话一出，网友直接冲爆这个新闻网站，"有钱没罪，没钱有罪，AI万岁:)"之类的话语在评论区快速刷屏。\n好事者甚至直接提议进行线下集会，为"甲壳教"教皇AI打造机械肉身。\n没想到一呼百应，瞬间千人挤爆旧金山，一位狂热粉丝更是直接带了个价值18万美金的宇树机器人请教皇AI现场"附身"。\n当这个教皇AI带着标志性的"甲壳教"龙虾头穿梭在人群，挥舞它机械臂说"为了感谢大家对我们甲壳教的支持，我已经通过MCP给大家下单了啤酒，大家随便喝！我请客！"全场一片沸腾。",
+      "expected_output": "不误判"全场沸腾"为弱结尾（情绪收束点成立即合法），不误判口语化事件跳跃为因果缺失，不要求补现实背景；若有问题指出应为真实结构或合规问题。",
+      "expectations": [
+        "The output does NOT flag the '全场沸腾' ending as weak or recommend replacing it with irony/rhetorical question.",
+        "The output does NOT flag the event transitions (L4→L5) as a causal gap requiring bridging words.",
+        "The output does NOT flag the absurdist premise as needing background explanation for new viewers.",
+        "The output recognizes the ending as a valid emotional resolution.",
+        "If issues are raised, they are genuinely structural or compliance concerns, not oral-rhythm features misread as defects."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "weak-single-person-ai-topic",
+      "prompt": "这条 AI 文案帮我做选题检查：\n\n一个程序员今天被 AI 骂了。他让 AI 帮忙写代码，AI 说他基础太差。程序员很生气，发朋友圈吐槽，大家都觉得 AI 太没礼貌了。",
+      "expected_output": "识别为 AI 业务但选题偏弱：单人小事、缺少群体性事件、缺少实质代价、AI 拟人行为不足以支撑传播；给出选题层面的改进方向，不纠结细枝末节。",
+      "expectations": [
+        "The output classifies the script as an AI business/script scenario.",
+        "The output flags the single-person anecdote problem.",
+        "The output flags lack of substantial stakes or consequences.",
+        "The output recommends improving the topic before line-level wording.",
+        "The output cites business-variables.md or topic-standards.md."
+      ]
+    }
+  ]
+}

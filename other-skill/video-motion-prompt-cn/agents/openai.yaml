@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chinese Video Motion Prompt"
+  short_description: "Frame-by-frame video motion analysis and Chinese prompt writing."
+  default_prompt: "Use $video-motion-prompt-cn to analyze my source video and references, then write one Chinese video prompt."

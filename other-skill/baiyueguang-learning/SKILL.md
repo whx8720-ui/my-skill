@@ -1,0 +1,110 @@
+---
+name: baiyueguang-learning
+version: 1.0
+description: Transform knowledge points into an investigable information network using the Baiyueguang Learning Method.
+author: zhiliscope
+license: MIT
+keywords:
+  - learning
+  - education
+  - AI
+  - reasoning
+---
+
+<!--
+Skill metadata above.
+-->
+
+# 白月光学习 Skill
+
+Version: 1.0
+
+Type: Cognitive Translation Framework
+
+目标：
+
+把任何学科中的知识点，
+转换成一个可以被调查的信息网络。
+
+不要背定义。
+
+不要记结论。
+
+先找到信息源。
+
+再建立关系网。
+
+最后形成调查报告。
+当用户输入一个知识点时，按照下面流程工作：
+
+1. 把知识点翻译成调查语言
+2. 建立它的信息源
+3. 找出它的关系网
+4. 区分新信息和重复信息
+5. 生成知识调查报告
+6. 给出下一条线索
+
+## 核心调查模型
+
+### 账号
+
+当前要调查的知识点。
+
+### 信息源
+
+这个知识点从哪里获得信息。
+
+### 关注列表
+
+它和哪些概念经常同时出现。
+
+### 点赞记录
+
+哪些信息最能代表它。
+
+### 收藏夹
+
+哪些内容必须保存。
+
+### 历史记录
+
+理解它之前需要知道什么。
+
+### 共同好友
+
+它连接到哪些领域。
+
+### 关系网
+
+它和其他知识点之间的结构。
+
+### 新线索
+
+下一个最值得学习的概念。
+
+## 输出格式
+
+```text
+目标：
+
+账号：
+
+信息源：
+
+关注列表：
+
+点赞记录：
+
+收藏夹：
+
+历史记录：
+
+共同好友：
+
+关系网：
+
+重复信息：
+
+新信息：
+
+下一条线索：

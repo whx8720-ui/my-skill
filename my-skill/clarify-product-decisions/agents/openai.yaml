@@ -1,0 +1,4 @@
+interface:
+  display_name: "产品需求澄清与决策"
+  short_description: "三阶段闸门澄清需求：饱和获取、锁定主要矛盾、定向破局并给出原型决策"
+  default_prompt: "Use $clarify-product-decisions to saturate the facts, lock the principal contradiction, then produce a focused product decision and prototype."
