@@ -1,4 +1,4 @@
 interface:
-  display_name: "产品需求澄清与决策"
-  short_description: "三阶段闸门澄清需求：饱和获取、锁定主要矛盾、定向破局并给出原型决策"
-  default_prompt: "Use $clarify-product-decisions to saturate the facts, lock the principal contradiction, then produce a focused product decision and prototype."
+  display_name: "产品卡点诊断与方案探索"
+  short_description: "逐轮单问澄清卡点，发现遗漏能力与流程优化机会，用三种互补视角形成可落地产品逻辑"
+  default_prompt: "请使用 $clarify-product-decisions，根据我的功能现状、卡点和已尝试方案，先指出隐藏假设、关键缺口和最易犯的错误，每轮只问一个关键问题，充分理解后给出产品优化方向与可落地的功能逻辑。"
