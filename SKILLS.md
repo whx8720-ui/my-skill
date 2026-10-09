@@ -2,11 +2,12 @@
 
 用途说明逐项依据技能目录里的 README；没有 README 时依据 `SKILL.md`。
 
-## my-skill（5）
+## my-skill（6）
 
 | 技能 | 用途 | 本机来源 | 说明依据 |
 |---|---|---|---|
 | [clarify-product-decisions](my-skill/clarify-product-decisions/SKILL.md) | 逐轮单问澄清产品卡点，发现隐藏假设、遗漏能力与流程优化机会，用三种互补视角形成优化方向与可落地功能逻辑。 | `C:/Users/admin/.codex/skills/clarify-product-decisions` | [SKILL.md](my-skill/clarify-product-decisions/SKILL.md) |
+| [feature-data-review-assistant](my-skill/feature-data-review-assistant/SKILL.md) | 先确认优化目标与数据口径，沿用户漏斗下钻，按目标、结果、原因、对策输出有数据依据的功能复盘。 | `C:/Users/admin/.codex/skills/feature-data-review-assistant` | [SKILL.md](my-skill/feature-data-review-assistant/SKILL.md) |
 | [ian-xiaohei-scenes](my-skill/ian-xiaohei-scenes/SKILL.md) | 把文章或故事转为“小黑、真实物件、物理动作、留白叙事”的插画提示词。 | `C:/Users/admin/.codex/skills/ian-xiaohei-scenes` | [README.md](my-skill/ian-xiaohei-scenes/README.md) |
 | [interaction-review](my-skill/interaction-review/SKILL.md) | 按产品设计要求评审原型或网址，检查流程矛盾、交互问题和交接事项。 | `D:/skills/myself-skill/interaction-review` | [SKILL.md](my-skill/interaction-review/SKILL.md) |
 | [system-prompt-optimizer](my-skill/system-prompt-optimizer/SKILL.md) | 优化反复使用的系统提示词，检查变量、规则冲突、模板职责和示例污染。 | `C:/Users/admin/.codex/skills/system-prompt-optimizer` | [SKILL.md](my-skill/system-prompt-optimizer/SKILL.md) |
