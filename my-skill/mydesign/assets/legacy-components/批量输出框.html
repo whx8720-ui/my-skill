@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>视频工具箱工作台 - 提取并下载视频</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --page-bg: #f5f7fa;
+      --panel-bg: #ffffff;
+      --text: #1f2329;
+      --muted: #8a919f;
+      --line: #e6e9ef;
+      --blue: #409eff;
+      --blue-dark: #2f82db;
+      --row-bg: #eef7ff;
+      --row-border: #8fc5ff;
+      --radius: 10px;
+    }
+
+    html, body {
+      margin: 0;
+      min-width: 1260px;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    body { min-height: 100vh; }
+
+    .topbar {
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid #eef0f4;
+      display: flex;
+      align-items: center;
+      padding: 0 38px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .back {
+      color: #67707f;
+      font-size: 14px;
+      margin-right: 24px;
+      user-select: none;
+    }
+
+    .brand {
+      color: #808897;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .user {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 20px;
+      border-left: 1px solid #eef0f4;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #f2f4f7;
+      color: #4f5968;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .user-meta { line-height: 1.15; }
+    .user-name { font-size: 14px; font-weight: 700; }
+    .user-role { font-size: 12px; color: #9aa1ad; margin-top: 3px; }
+
+    .workspace {
+      width: 1180px;
+      margin: 20px auto 40px;
+    }
+
+    /* 外层功能容器：宽高固定 */
+    .download-module {
+      width: 1180px;
+      height: 635px;
+      background: var(--panel-bg);
+      border: 1px solid #e7eaf0;
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(20, 35, 60, .03);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 62px 1fr 128px;
+    }
+
+    .tabs {
+      height: 62px;
+      padding: 0 15px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: end;
+      border-bottom: 1px solid #edf0f4;
+    }
+
+    .tab {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #444b57;
+      font-size: 14px;
+      position: relative;
+      cursor: default;
+    }
+
+    .tab.active {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--blue);
+    }
+
+    .module-body {
+      min-height: 0;
+      padding: 16px 14px 10px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+    }
+
+    .title {
+      font-size: 19px;
+      font-weight: 500;
+      margin: 0 0 4px;
+    }
+
+    .desc {
+      color: #8c95a3;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .links-box {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid transparent;
+    }
+
+    .links-label {
+      flex: 0 0 auto;
+      font-size: 12px;
+      color: #5c6573;
+      margin: 0 0 6px;
+    }
+
+    /* 固定高度的浅蓝灰链接区域：只有这里允许滚动 */
+    .links-scroll {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: #f5f8fb;
+      border: 1px solid #dfe6ee;
+      border-radius: 8px;
+      padding: 0 7px 0 0;
+      scrollbar-width: thin;
+      scrollbar-color: #cfd6df #edf2f6;
+    }
+
+    .links-scroll::-webkit-scrollbar { width: 8px; }
+    .links-scroll::-webkit-scrollbar-thumb {
+      background: #cfd6df;
+      border-radius: 8px;
+    }
+    .links-scroll::-webkit-scrollbar-track {
+      background: #edf2f6;
+      border-radius: 8px;
+    }
+
+    /* 每一条链接只是一行内容，不做卡片分割；大间距来自行高 */
+    .link-row {
+      height: 96px;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
+      align-items: center;
+      padding: 0 12px;
+      margin: 0;
+    }
+
+    .index {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      height: 52px;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* 默认边框透明，视觉上与整块浅蓝底融为一体 */
+    .input-shell {
+      height: 52px;
+      min-width: 0;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      transition: border-color .14s ease, background .14s ease, box-shadow .14s ease;
+      overflow: hidden;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* 只有当前点击/聚焦的行出现蓝色描边 */
+    .link-row.selected .input-shell {
+      border-color: #409eff;
+      box-shadow: 0 0 0 1px rgba(64, 158, 255, .04);
+      background: #f8fbff;
+    }
+
+    .link-input {
+      display: block;
+      width: 100%;
+      height: 50px;
+      border: 0;
+      outline: 0;
+      resize: none;
+      overflow: hidden;
+      padding: 6px 10px;
+      background: transparent;
+      font-size: 14px;
+      line-height: 21px;
+      color: #303846;
+      font-family: inherit;
+    }
+
+    .link-input::placeholder {
+      color: #9aa6b5;
+      opacity: 1;
+    }
+
+    .module-footer {
+      border-top: 1px solid #edf0f4;
+      padding: 14px;
+      display: grid;
+      grid-template-rows: 68px 36px;
+      gap: 8px;
+      background: #fff;
+    }
+
+    .footer-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: #596273;
+      margin-bottom: 6px;
+    }
+
+    .select-like {
+      height: 34px;
+      border: 1px solid #dfe4ea;
+      border-radius: 5px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      color: #5b6472;
+      font-size: 13px;
+    }
+
+    .chevron {
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid #a2aab6;
+      border-bottom: 1.5px solid #a2aab6;
+      transform: rotate(45deg) translateY(-2px);
+      margin-right: 2px;
+    }
+
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .primary-btn {
+      height: 34px;
+      padding: 0 18px;
+      border: none;
+      border-radius: 5px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: none;
+    }
+
+    .primary-btn:hover { background: var(--blue-dark); }
+
+    .history-card {
+      margin-top: 16px;
+      width: 1180px;
+      height: 230px;
+      background: #fff;
+      border: 1px solid #e7eaf0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .history-head {
+      height: 52px;
+      padding: 0 14px;
+      border-bottom: 1px solid #eef0f4;
+      display: flex;
+      align-items: center;
+    }
+
+    .history-title { font-size: 18px; font-weight: 700; }
+    .history-count { margin-left: auto; color: #8d95a2; font-size: 13px; }
+
+    .history-body {
+      height: calc(100% - 52px);
+      padding: 14px;
+      color: #a0a7b2;
+      font-size: 13px;
+    }
+
+    .history-placeholder {
+      height: 54px;
+      border: 1px solid #edf0f4;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      background: #fafbfd;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 92px;
+      transform: translateX(-50%) translateY(-10px);
+      background: rgba(36, 41, 48, .94);
+      color: #fff;
+      font-size: 13px;
+      border-radius: 6px;
+      padding: 9px 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 99;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="back">←&nbsp;&nbsp;退出</div>
+    <div class="brand">视频工具箱工作台</div>
+    <div class="user">
+      <div class="avatar">杨</div>
+      <div class="user-meta">
+        <div class="user-name">杨鼎彬</div>
+        <div class="user-role">超级管理员</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="download-module">
+      <div class="tabs">
+        <div class="tab active">视频下载</div>
+        <div class="tab">字幕擦除</div>
+        <div class="tab">画质增强</div>
+      </div>
+
+      <div class="module-body">
+        <h1 class="title">提取并下载视频</h1>
+        <div class="desc">粘贴平台链接，提取视频或音频文件。每条一个输入框，回车新增下一条，Shift + 回车条内换行。</div>
+
+        <div class="links-box">
+          <div class="links-label">视频链接</div>
+          <div class="links-scroll" id="linksScroll" aria-label="视频链接列表"></div>
+        </div>
+      </div>
+
+      <div class="module-footer">
+        <div class="footer-options">
+          <div class="field">
+            <label>导出格式</label>
+            <div class="select-like">
+              <span>MP4（视频）</span>
+              <span class="chevron"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label>下载画质</label>
+            <div class="select-like">
+              <span>原画质</span>
+              <span class="chevron"></span>
+            </div>
+          </div>
+        </div>
+        <div class="footer-actions">
+          <button class="primary-btn" id="startBtn">开始处理</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="history-card">
+      <div class="history-head">
+        <div class="history-title">处理历史</div>
+        <div class="history-count">共 94 条任务</div>
+      </div>
+      <div class="history-body">
+        <div class="history-placeholder">处理记录显示区域（不会被上方新增链接挤压）</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const list = document.getElementById('linksScroll');
+    const startBtn = document.getElementById('startBtn');
+    const toast = document.getElementById('toast');
+
+    function renumberRows() {
+      [...list.querySelectorAll('.link-row')].forEach((row, i) => {
+        row.querySelector('.index').textContent = `${i + 1}.`;
+      });
+    }
+
+    function selectRow(row) {
+      list.querySelectorAll('.link-row.selected').forEach(item => item.classList.remove('selected'));
+      row.classList.add('selected');
+    }
+
+    function refreshPlaceholders() {
+      const rows = [...list.querySelectorAll('.link-row')];
+      rows.forEach((row, i) => {
+        const input = row.querySelector('.link-input');
+        const isLast = i === rows.length - 1;
+        input.placeholder = isLast && !input.value
+          ? '回车新增下一条，Shift + 回车条内换行\n支持抖音,Tiktok,Bilibili平台 短链接和分享链接'
+          : '';
+      });
+    }
+
+    function addRow({ value = '', focus = false } = {}) {
+      const row = document.createElement('div');
+      row.className = 'link-row';
+
+      const index = document.createElement('div');
+      index.className = 'index';
+
+      const shell = document.createElement('div');
+      shell.className = 'input-shell';
+
+      const input = document.createElement('textarea');
+      input.className = 'link-input';
+      input.rows = 2;
+      input.autocomplete = 'off';
+      input.spellcheck = false;
+      input.setAttribute('aria-label', '视频链接');
+      input.value = value;
+
+      shell.appendChild(input);
+      row.append(index, shell);
+      list.appendChild(row);
+      renumberRows();
+      refreshPlaceholders();
+
+      row.addEventListener('mousedown', () => selectRow(row));
+      input.addEventListener('focus', () => selectRow(row));
+      input.addEventListener('input', refreshPlaceholders);
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+
+        // Shift + Enter 保留 textarea 原生行为：在当前条目中换行。
+        if (e.shiftKey) return;
+        e.preventDefault();
+
+        if (!input.value.trim()) {
+          showToast('请先输入视频链接');
+          return;
+        }
+
+        const rows = [...list.querySelectorAll('.link-row')];
+        const currentIndex = rows.indexOf(row);
+        const nextRow = rows[currentIndex + 1];
+
+        if (nextRow) {
+          const nextInput = nextRow.querySelector('.link-input');
+          nextInput.focus();
+          nextRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        } else {
+          addRow({ focus: true });
+        }
+      });
+
+      if (focus) {
+        requestAnimationFrame(() => {
+          input.focus();
+          row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
+      }
+
+      return row;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 1600);
+    }
+
+    startBtn.addEventListener('click', () => {
+      const values = [...list.querySelectorAll('.link-input')]
+        .map(input => input.value.trim())
+        .filter(Boolean);
+
+      if (!values.length) {
+        showToast('请至少输入一条视频链接');
+        return;
+      }
+
+      showToast(`已提交 ${values.length} 条链接进行处理`);
+    });
+
+    // 初始只提供 1 条输入框；按回车继续新增。
+    addRow({ focus: false });
+
+    // 点击模块空白处不显示任何行边框；只有实际点击某一行后才显示选中边框
+    document.addEventListener('mousedown', (e) => {
+      if (!e.target.closest('.link-row')) {
+        list.querySelectorAll('.link-row.selected').forEach(item => item.classList.remove('selected'));
+      }
+    });
+  </script>
+</body>
+</html>

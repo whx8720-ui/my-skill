@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>选择音效</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --blue: #1677ff;
+    --blue-weak: #eaf3ff;
+    --text-1: #2f3640;
+    --text-2: #667085;
+    --text-3: #98a2b3;
+    --border: #e5e8ee;
+    --panel: #ffffff;
+    --page: #eef1f4;
+    --purple: #7a52e8;
+    --purple-bg: #f2edff;
+    --orange: #f59e0b;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text-1);
+    background:
+      linear-gradient(rgba(22, 27, 34, .45), rgba(22, 27, 34, .45)),
+      linear-gradient(135deg, #dadde2 0%, #bcc3cb 100%);
+  }
+  .page-placeholder {
+    position: fixed;
+    inset: 0;
+    opacity: .2;
+    pointer-events: none;
+    background: linear-gradient(90deg, #fff 0 58%, #f3f4f6 58% 100%);
+  }
+  .modal {
+    position: relative;
+    width: min(780px, calc(100vw - 40px));
+    height: min(770px, calc(100vh - 48px));
+    margin: 24px auto;
+    background: var(--panel);
+    border-radius: 10px;
+    box-shadow: 0 18px 60px rgba(24, 32, 44, .24);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 18px 12px;
+    flex: 0 0 auto;
+  }
+  .title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .2px;
+  }
+  .close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #8d96a3;
+    font-size: 22px;
+    cursor: pointer;
+  }
+  .close:hover { background: #f5f6f8; }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 0 18px 14px;
+    flex: 0 0 auto;
+  }
+  .search-wrap {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #d9dee7;
+    border-radius: 7px;
+    background: #fff;
+    transition: .2s;
+    overflow: hidden;
+  }
+  .search-wrap:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(22, 119, 255, .10);
+  }
+  .search-icon {
+    width: 42px;
+    text-align: center;
+    color: #98a2b3;
+    font-size: 16px;
+  }
+  .search-input {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    padding: 0 12px 0 0;
+    font-size: 14px;
+    color: #344054;
+  }
+  .search-input::placeholder { color: #b2b8c2; }
+  .btn {
+    height: 40px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    padding: 0 18px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    color: #fff;
+    background: var(--blue);
+    font-weight: 600;
+  }
+  .common-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-color: #d9dee7;
+    background: #fff;
+    color: #454c59;
+    font-weight: 500;
+    padding: 0 14px;
+  }
+  .common-btn.active {
+    color: var(--blue);
+    border-color: #9ec5ff;
+    background: var(--blue-weak);
+  }
+  .common-star { font-size: 15px; line-height: 1; }
+
+  .list-wrap {
+    padding: 0 18px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #d2d7df transparent;
+  }
+  .list-wrap::-webkit-scrollbar { width: 6px; }
+  .list-wrap::-webkit-scrollbar-thumb { background: #d2d7df; border-radius: 10px; }
+
+  .sound-item {
+    min-height: 70px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 14px;
+    display: grid;
+    grid-template-columns: 20px 44px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    background: #fff;
+    margin-bottom: 8px;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .sound-item:hover {
+    border-color: #cfd5de;
+    box-shadow: 0 2px 9px rgba(25, 34, 48, .04);
+  }
+  .sound-item.hidden { display: none; }
+  .checkbox {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #d7dce4;
+    border-radius: 2px;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+  }
+  .checkbox:checked {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .checkbox:checked::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .audio-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 9px;
+    background: var(--purple-bg);
+    color: var(--purple);
+    display: grid;
+    place-items: center;
+    font-size: 21px;
+  }
+  .info { min-width: 0; }
+  .name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #667085;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pin-tag {
+    color: var(--orange);
+    background: #fff8e8;
+    border: 1px solid #ffe3a6;
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 11px;
+    line-height: 18px;
+    flex: 0 0 auto;
+  }
+  .meta {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #98a2b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    color: #69717e;
+    font-size: 13px;
+  }
+  .action {
+    border: 0;
+    background: transparent;
+    padding: 6px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .action:hover { color: var(--blue); }
+  .favorite.active { color: var(--orange); font-weight: 600; }
+  .audition.active { color: var(--blue); font-weight: 600; }
+  .action-icon { font-size: 15px; line-height: 1; }
+  .download-icon { width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; }
+  .download-icon svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  .empty {
+    display: none;
+    height: 180px;
+    align-items: center;
+    justify-content: center;
+    color: #98a2b3;
+    font-size: 14px;
+  }
+  .empty.show { display: flex; }
+
+  .footer {
+    height: 64px;
+    flex: 0 0 auto;
+    border-top: 1px solid #eef0f3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 18px;
+    background: rgba(255,255,255,.97);
+  }
+  .btn-cancel {
+    border-color: #d8dde5;
+    background: #fff;
+    color: #46505c;
+  }
+  .use-btn { min-width: 118px; }
+
+  @media (max-width: 700px) {
+    .modal { width: calc(100vw - 20px); margin: 10px auto; height: calc(100vh - 20px); }
+    .toolbar { grid-template-columns: 1fr auto; }
+    .common-btn { grid-column: 1 / -1; justify-self: start; }
+    .sound-item { grid-template-columns: 20px 42px 1fr; }
+    .actions { grid-column: 2 / -1; justify-content: flex-end; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-placeholder"></div>
+
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+  <div class="header">
+    <div class="title" id="dialogTitle">选择音效</div>
+    <button class="close" aria-label="关闭">×</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input id="soundSearch" class="search-input" type="text" placeholder="搜索文件名..." autocomplete="off" />
+    </div>
+    <button id="searchBtn" class="btn btn-primary">搜索</button>
+    <button id="commonFirst" class="btn common-btn active" type="button" aria-pressed="true">
+      <span class="common-star">★</span>
+      常用优先
+    </button>
+  </div>
+
+  <div class="list-wrap" id="soundList">
+    <!-- 常用音效默认置顶 -->
+    <div class="sound-item" data-name="预设BGM07.mp3" data-common="true">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row">
+          <div class="name">预设BGM07.mp3</div>
+          <span class="pin-tag">常用</span>
+        </div>
+        <div class="meta">音频 · eeaabb03b4244d614363d90720ea6f21 · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite active" onclick="toggleFavorite(this)"><span class="action-icon">★</span><span>已收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div class="sound-item" data-name="预设BGM03.mp3" data-common="true">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row">
+          <div class="name">预设BGM03.mp3</div>
+          <span class="pin-tag">常用</span>
+        </div>
+        <div class="meta">音频 · cb82eb69b8a9e31f3831488f7db1c8c7 · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite active" onclick="toggleFavorite(this)"><span class="action-icon">★</span><span>已收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div class="sound-item" data-name="预设BGM08.mp3" data-common="false">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row"><div class="name">预设BGM08.mp3</div></div>
+        <div class="meta">音频 · 7ddd4d577be9eb8e8b58e5ec5c5c4717 · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite" onclick="toggleFavorite(this)"><span class="action-icon">☆</span><span>收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div class="sound-item" data-name="预设BGM06.mp3" data-common="false">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row"><div class="name">预设BGM06.mp3</div></div>
+        <div class="meta">音频 · c65422d1f2af50087d67824f867b9127 · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite" onclick="toggleFavorite(this)"><span class="action-icon">☆</span><span>收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div class="sound-item" data-name="预设BGM05.mp3" data-common="false">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row"><div class="name">预设BGM05.mp3</div></div>
+        <div class="meta">音频 · 829dae66be08104f9ab3688184ce12b4 · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite" onclick="toggleFavorite(this)"><span class="action-icon">☆</span><span>收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div class="sound-item" data-name="预设BGM04.mp3" data-common="false">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row"><div class="name">预设BGM04.mp3</div></div>
+        <div class="meta">音频 · ff9a8961ca861f3f654c4bfea384ce19 · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite" onclick="toggleFavorite(this)"><span class="action-icon">☆</span><span>收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div class="sound-item" data-name="预设BGM02.mp3" data-common="false">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row"><div class="name">预设BGM02.mp3</div></div>
+        <div class="meta">音频 · d2689bf35d4870e80d867173eb02b636 · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite" onclick="toggleFavorite(this)"><span class="action-icon">☆</span><span>收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div class="sound-item" data-name="预设BGM01.mp3" data-common="false">
+      <input class="checkbox" type="checkbox" />
+      <div class="audio-icon">♫</div>
+      <div class="info">
+        <div class="name-row"><div class="name">预设BGM01.mp3</div></div>
+        <div class="meta">音频 · cd507caf540fd7b83f6d4cb830e3625f · 2026-08-26</div>
+      </div>
+      <div class="actions">
+        <button class="action favorite" onclick="toggleFavorite(this)"><span class="action-icon">☆</span><span>收藏</span></button>
+        <button class="action"><span class="action-icon download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg></span><span>下载</span></button>
+        <button class="action audition" onclick="toggleAudition(this)"><span class="action-icon">▷</span><span>试听</span></button>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty">没有找到匹配的音效</div>
+  </div>
+
+  <div class="footer">
+    <button class="btn btn-cancel">取消</button>
+    <button class="btn btn-primary use-btn">使用选中音效</button>
+  </div>
+</div>
+
+<script>
+  const list = document.getElementById('soundList');
+  const searchInput = document.getElementById('soundSearch');
+  const searchBtn = document.getElementById('searchBtn');
+  const commonFirstBtn = document.getElementById('commonFirst');
+  const emptyState = document.getElementById('emptyState');
+  let commonFirst = true;
+
+  function items() {
+    return Array.from(list.querySelectorAll('.sound-item'));
+  }
+
+  function renderList() {
+    const keyword = searchInput.value.trim().toLowerCase();
+    const all = items();
+
+    all.forEach(item => {
+      const matched = item.dataset.name.toLowerCase().includes(keyword);
+      item.classList.toggle('hidden', !matched);
+    });
+
+    if (commonFirst) {
+      all.sort((a, b) => {
+        const av = a.dataset.common === 'true' ? 1 : 0;
+        const bv = b.dataset.common === 'true' ? 1 : 0;
+        return bv - av;
+      }).forEach(item => list.insertBefore(item, emptyState));
+    }
+
+    const visibleCount = all.filter(item => !item.classList.contains('hidden')).length;
+    emptyState.classList.toggle('show', visibleCount === 0);
+  }
+
+  function toggleFavorite(button) {
+    const item = button.closest('.sound-item');
+    const isCommon = item.dataset.common === 'true';
+    item.dataset.common = String(!isCommon);
+    button.classList.toggle('active', !isCommon);
+    button.querySelector('.action-icon').textContent = !isCommon ? '★' : '☆';
+    button.querySelector('span:last-child').textContent = !isCommon ? '已收藏' : '收藏';
+
+    const row = item.querySelector('.name-row');
+    const oldTag = row.querySelector('.pin-tag');
+    if (!isCommon && !oldTag) {
+      const tag = document.createElement('span');
+      tag.className = 'pin-tag';
+      tag.textContent = '常用';
+      row.appendChild(tag);
+    } else if (isCommon && oldTag) {
+      oldTag.remove();
+    }
+    renderList();
+  }
+
+  function toggleAudition(button) {
+    document.querySelectorAll('.audition').forEach(other => {
+      if (other !== button) {
+        other.classList.remove('active');
+        other.querySelector('.action-icon').textContent = '▷';
+        other.querySelector('span:last-child').textContent = '试听';
+      }
+    });
+    const active = button.classList.toggle('active');
+    button.querySelector('.action-icon').textContent = active ? 'Ⅱ' : '▷';
+    button.querySelector('span:last-child').textContent = active ? '停止' : '试听';
+  }
+
+  commonFirstBtn.addEventListener('click', () => {
+    commonFirst = !commonFirst;
+    commonFirstBtn.classList.toggle('active', commonFirst);
+    commonFirstBtn.setAttribute('aria-pressed', String(commonFirst));
+    renderList();
+  });
+
+  searchBtn.addEventListener('click', renderList);
+  searchInput.addEventListener('input', renderList);
+  searchInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') renderList();
+  });
+
+  renderList();
+</script>
+</body>
+</html>
