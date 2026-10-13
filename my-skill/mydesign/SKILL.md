@@ -1,6 +1,6 @@
 ---
 name: mydesign
-description: 将粗浅想法、产品说明书或页面字段思维导图梳理为角色交互链路与逐页组件说明，用户确认后生成 Vue 3＋Element Plus 的 Linear 亮色 PC 原型；后续修改先交付组件 HTML 预览，确认后合并整页。适用于用我的规范做原型、mydesign、页面组件迭代等请求。
+description: 将粗浅想法、产品说明书或页面字段思维导图梳理为角色交互链路与逐页组件说明，用户确认后生成 Vue 3＋Element Plus 的 Linear 亮色 PC 原型；后续修改先交付组件 HTML 预览，确认后合并整页。凡是做产品原型、修改任何产品 HTML 文件（含单文件演示页）或调整页面交互规则，都必须使用本技能，并符合用户的 Linear 亮色设计样张；也适用于用我的规范做原型、mydesign、页面组件迭代等请求。
 ---
 
 # MyDesign · 智创 PC 原型
