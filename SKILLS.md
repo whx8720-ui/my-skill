@@ -2,7 +2,7 @@
 
 用途说明逐项依据技能目录里的 README；没有 README 时依据 `SKILL.md`。
 
-## my-skill（7）
+## my-skill（8）
 
 | 技能 | 用途 | 本机来源 | 说明依据 |
 |---|---|---|---|
@@ -10,7 +10,8 @@
 | [feature-data-review-assistant](my-skill/feature-data-review-assistant/SKILL.md) | 先确认优化目标与数据口径，沿用户漏斗下钻，按目标、结果、原因、对策输出有数据依据的功能复盘。 | `C:/Users/admin/.codex/skills/feature-data-review-assistant` | [SKILL.md](my-skill/feature-data-review-assistant/SKILL.md) |
 | [ian-xiaohei-scenes](my-skill/ian-xiaohei-scenes/SKILL.md) | 把文章或故事转为“小黑、真实物件、物理动作、留白叙事”的插画提示词。 | `C:/Users/admin/.codex/skills/ian-xiaohei-scenes` | [README.md](my-skill/ian-xiaohei-scenes/README.md) |
 | [interaction-review](my-skill/interaction-review/SKILL.md) | 按产品设计要求评审原型或网址，检查流程矛盾、交互问题和交接事项。 | `D:/skills/myself-skill/interaction-review` | [SKILL.md](my-skill/interaction-review/SKILL.md) |
-| [mydesign](my-skill/mydesign/SKILL.md) | 将想法、说明书或字段导图梳理为角色交互链路与逐页组件，确认后生成 Vue 3 与 Element Plus 的 Linear 亮色 PC 原型；后续修改先交付组件预览，确认后再合并。 | `C:/Users/admin/.codex/skills/mydesign` | [SKILL.md](my-skill/mydesign/SKILL.md) |
+| [my-pm-prd-skill](my-skill/my-pm-prd-skill/SKILL.md) | 通过逐轮需求澄清，确认角色、用户任务与业务价值，梳理分权限核心链路、页面字段与布局、后台业务规则和场景验收，输出可持续迭代的产品说明书。 | `D:/skills/my-pm-prd-skill` | [SKILL.md](my-skill/my-pm-prd-skill/SKILL.md) |
+| [mydesign](my-skill/mydesign/SKILL.md) | 将想法、说明书或字段导图梳理为角色交互链路与逐页组件，确认后生成 Vue 3 与 Element Plus 的 Linear 亮色 PC 原型；后续修改先交付组件预览，确认后再合并。 | `D:/skills/myself-skill/mydesign` | [SKILL.md](my-skill/mydesign/SKILL.md) |
 | [system-prompt-optimizer](my-skill/system-prompt-optimizer/SKILL.md) | 优化反复使用的系统提示词，检查变量、规则冲突、模板职责和示例污染。 | `C:/Users/admin/.codex/skills/system-prompt-optimizer` | [SKILL.md](my-skill/system-prompt-optimizer/SKILL.md) |
 | [vitamin-prototype-annotation](my-skill/vitamin-prototype-annotation/SKILL.md) | 从 PRD 提取业务规则，在现有前端原型上添加只读标注供评审和交接。 | `C:/Users/admin/.codex/skills/vitamin-prototype-annotation` | [SKILL.md](my-skill/vitamin-prototype-annotation/SKILL.md) |
 
